@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StillApp Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --red: #c0000a;
+    --deep-red: #7a0005;
+    --black: #050505;
+    --coin-gold: #f5c518;
+    --success: #2ddf82;
+    --error: #ff3b3b;
+  }
+  
+  html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Raleway', sans-serif;
+    background: linear-gradient(135deg, #1a0002 0%, #050505 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+  }
+  
+  .admin-box {
+    background: rgba(10, 0, 0, 0.8);
+    border: 1px solid rgba(192, 0, 10, 0.3);
+    border-radius: 20px;
+    padding: 40px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 40px rgba(192, 0, 10, 0.2);
+  }
+  
+  .admin-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #fff, #ffaaaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .admin-subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  
+  input, select {
+    width: 100%;
+    padding: 14px;
+    border: 1.5px solid rgba(192,0,10,0.3);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  input:focus, select:focus {
+    outline: none;
+    border-color: rgba(245,197,24,0.5);
+    box-shadow: 0 0 0 3px rgba(245,197,24,0.08);
+    background: rgba(255,255,255,0.08);
+  }
+  
+  input::placeholder {
+    color: rgba(255,255,255,0.2);
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  
+  .btn:active {
+    transform: scale(0.97);
+  }
+  
+  .btn-login {
+    background: linear-gradient(135deg, var(--red), var(--deep-red));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(192,0,10,0.4);
+  }
+  
+  .btn-login:hover {
+    box-shadow: 0 4px 28px rgba(192,0,10,0.6);
+  }
+  
+  .btn-upload {
+    background: linear-gradient(135deg, var(--coin-gold), #e8a900);
+    color: #1a0a00;
+    box-shadow: 0 4px 20px rgba(245,197,24,0.3);
+    font-weight: 800;
+  }
+  
+  .btn-upload:hover {
+    box-shadow: 0 4px 28px rgba(245,197,24,0.5);
+  }
+  
+  .btn-logout {
+    background: rgba(192,0,10,0.2);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(192,0,10,0.4);
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  .message {
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    display: none;
+  }
+  
+  .message.success {
+    background: rgba(45,223,130,0.1);
+    border: 1px solid rgba(45,223,130,0.3);
+    color: var(--success);
+    display: block;
+  }
+  
+  .message.error {
+    background: rgba(255,60,60,0.1);
+    border: 1px solid rgba(255,60,60,0.3);
+    color: var(--error);
+    display: block;
+  }
+  
+  .login-screen, .upload-screen {
+    display: none;
+  }
+  
+  .login-screen.active, .upload-screen.active {
+    display: block;
+  }
+  
+  .info-box {
+    background: rgba(192,0,10,0.1);
+    border-left: 3px solid var(--red);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  
+  .server-url {
+    font-family: monospace;
+    background: rgba(0,0,0,0.5);
+    padding: 4px 8px;
+    border-radius: 4px;
+    word-break: break-all;
+    color: var(--coin-gold);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="admin-box">
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen active">
+      <div class="admin-title">🔐 ADMIN</div>
+      <div class="admin-subtitle">Панель управления StillApp</div>
+      
+      <div class="message" id="loginMessage"></div>
+      
+      <div class="form-group">
+        <label>Админ Пароль</label>
+        <input type="password" id="adminPassword" placeholder="Введи пароль" />
+      </div>
+      
+      <button class="btn btn-login" onclick="login()">ВОЙТИ</button>
+    </div>
+    
+    <!-- UPLOAD SCREEN -->
+    <div class="upload-screen">
+      <div class="admin-title">📤 ЗАГРУЗКА</div>
+      <div class="admin-subtitle">Добавь контент моделям</div>
+      
+      <div class="info-box">
+        ⚠️ Убедись что используешь HTTPS ссылки на фото/видео (telegra.ph или imgur.com)
+      </div>
+      
+      <div class="message" id="uploadMessage"></div>
+      
+      <div class="form-group">
+        <label>Выбери Модель</label>
+        <select id="modelSelect">
+          <option value="">-- Выбери --</option>
+          <option value="Whylollycry">Whylollycry</option>
+          <option value="Аня мур">Аня мур</option>
+          <option value="Tenlikova">Tenlikova</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Тип Контента</label>
+        <select id="contentType">
+          <option value="">-- Выбери --</option>
+          <option value="photo">📸 Фото</option>
+          <option value="video">🎬 Видео</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Ссылка на Контент (HTTPS URL)</label>
+        <input type="url" id="contentUrl" placeholder="https://telegra.ph/file/..." />
+      </div>
+      
+      <button class="btn btn-upload" onclick="uploadContent()">✓ ЗАГРУЗИТЬ</button>
+      <button class="btn btn-logout" onclick="logout()">Выйти</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let adminKey = null;
+const SERVER_URL = 'https://stillapp-backend.railway.app'; // Change to your Railway URL
+
+function showMessage(elementId, text, type) {
+  const el = document.getElementById(elementId);
+  el.textContent = text;
+  el.className = 'message ' + type;
+  setTimeout(() => { el.className = 'message'; }, 4000);
+}
+
+function login() {
+  const password = document.getElementById('adminPassword').value;
+  
+  if (!password) {
+    showMessage('loginMessage', '❌ Введи пароль', 'error');
+    return;
+  }
+  
+  // If password is correct, switch to upload screen
+  // In real app, you'd validate on server, but for now we'll just store it
+  adminKey = password;
+  document.querySelector('.login-screen').classList.remove('active');
+  document.querySelector('.upload-screen').classList.add('active');
+  document.getElementById('adminPassword').value = '';
+  showMessage('uploadMessage', '✅ Вход выполнен!', 'success');
+}
+
+function logout() {
+  adminKey = null;
+  document.querySelector('.upload-screen').classList.remove('active');
+  document.querySelector('.login-screen').classList.add('active');
+  document.getElementById('modelSelect').value = '';
+  document.getElementById('contentType').value = '';
+  document.getElementById('contentUrl').value = '';
+  showMessage('uploadMessage', '', '');
+}
+
+async function uploadContent() {
+  const model = document.getElementById('modelSelect').value;
+  const type = document.getElementById('contentType').value;
+  const url = document.getElementById('contentUrl').value;
+  
+  if (!model || !type || !url) {
+    showMessage('uploadMessage', '❌ Заполни все поля', 'error');
+    return;
+  }
+  
+  if (!url.startsWith('https://')) {
+    showMessage('uploadMessage', '❌ Используй HTTPS ссылку', 'error');
+    return;
+  }
+  
+  try {
+    const response = await fetch(`${SERVER_URL}/api/admin/upload`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Admin-Key': adminKey
+      },
+      body: JSON.stringify({
+        model: model,
+        url: url,
+        type: type
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      showMessage('uploadMessage', `✅ ${data.message}`, 'success');
+      document.getElementById('contentUrl').value = '';
+    } else {
+      showMessage('uploadMessage', `❌ ${data.error}`, 'error');
+    }
+  } catch (error) {
+    showMessage('uploadMessage', `❌ Ошибка подключения: ${error.message}`, 'error');
+  }
+}
+
+// Allow Enter key
+document.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    if (document.querySelector('.login-screen').classList.contains('active')) {
+      login();
+    } else {
+      uploadContent();
+    }
+  }
+});
+</script>
+
+</body>
+</html>
